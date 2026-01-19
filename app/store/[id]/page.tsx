@@ -14,9 +14,11 @@ export default function PublicStore() {
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
 
+  // 👇 THIS IS THE CRITICAL FIX
+  // It checks: Is this a Cloudinary link? If yes, keep it. If no, add the backend URL.
   const getImageUrl = (path: string) => {
     if (!path) return "/placeholder.png";
-    if (path.startsWith("http")) return path;
+    if (path.toString().startsWith("http")) return path; 
     return `https://bua-backend.onrender.com${path}`;
   };
 
@@ -105,7 +107,7 @@ export default function PublicStore() {
             {/* Gradient Background */}
             <div className="bg-gradient-to-r from-[#500000] to-[#8B0000] h-32 md:h-48 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/10"></div>
-                {/* Industrial Pattern Overlay (CSS Trick) */}
+                {/* Industrial Pattern Overlay */}
                 <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px'}}></div>
             </div>
             
@@ -126,10 +128,9 @@ export default function PublicStore() {
                     </p>
                 </div>
                 
-                {/* ACTION BUTTONS - BUA THEMED */}
+                {/* ACTION BUTTONS */}
                 <div className="mt-4 md:mt-0 pb-4 z-10 flex flex-wrap gap-3 justify-center md:justify-end">
                     
-                    {/* 1. Chat Button - Red */}
                     <button 
                         onClick={handleMessageSeller}
                         disabled={chatLoading}
@@ -140,7 +141,6 @@ export default function PublicStore() {
 
                     {profile.phone_number && (
                         <>
-                            {/* 2. WhatsApp Button - Standard Green (Keep for recognition) */}
                             <a 
                                 href={`https://wa.me/${profile.phone_number.replace(/\D/g,'')}`}
                                 target="_blank" rel="noopener noreferrer"
@@ -149,7 +149,6 @@ export default function PublicStore() {
                                 📱 WhatsApp
                             </a>
                             
-                            {/* 3. Call Button - BUA Gold */}
                             <a href={`tel:${profile.phone_number}`} className="bg-yellow-400 text-[#8B0000] px-6 py-2.5 rounded-lg font-bold shadow hover:bg-yellow-500 transition flex items-center gap-2 border border-yellow-500">
                                 📞 Call Office
                             </a>
@@ -192,7 +191,6 @@ export default function PublicStore() {
                                 ) : (
                                     <div className="text-gray-300 text-6xl">📦</div>
                                 )}
-                                {/* Category Tag */}
                                 <span className="absolute top-2 left-2 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                                     {product.category_name || "Stock"}
                                 </span>
