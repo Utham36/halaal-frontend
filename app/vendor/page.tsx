@@ -12,10 +12,25 @@ export default function VendorDashboard() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // 👇 THE FIX: Smart Image Handling for Dashboard
   const getImageUrl = (path: string) => {
     if (!path) return "/placeholder.png";
-    if (path.startsWith("http")) return path;
-    return `https://bua-backend.onrender.com${path}`;
+    const strPath = path.toString();
+
+    // 1. If it's a full link (starts with http), use it.
+    if (strPath.startsWith("http")) return strPath;
+
+    // 2. 🚨 CLOUDINARY DETECTOR: If it looks like a Cloudinary path, fix it.
+    // REPLACE 'YOUR_CLOUD_NAME' below with your actual Cloudinary name (e.g. 'djlq8...')
+    if (strPath.includes("image/upload")) {
+        const cloudName = "dgt52rkq1"; 
+        const cleanCloudPath = strPath.startsWith("/") ? strPath.slice(1) : strPath;
+        return `https://res.cloudinary.com/${cloudName}/${cleanCloudPath}`;
+    }
+
+    // 3. Local Backend Images: Ensure it has a slash (Fixes "comimage" error)
+    const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
+    return `https://bua-backend.onrender.com${cleanPath}`;
   };
 
   useEffect(() => {
