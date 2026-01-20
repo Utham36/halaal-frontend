@@ -13,13 +13,29 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { addToCart } = useCart();
 
+  // 👇 THE FIX: Smart Image Handling for Home Page
   const getImageUrl = (product: any) => {
     let path = "";
     if (product.images && product.images.length > 0) path = product.images[0].image;
     else if (product.image) path = product.image;
-    if (!path) return null;
-    if (path.startsWith("http")) return path;
-    return `https://bua-backend.onrender.com${path}`;
+
+    if (!path) return "/placeholder.png";
+    const strPath = path.toString();
+
+    // 1. If it's a full link (starts with http), use it.
+    if (strPath.startsWith("http")) return strPath;
+
+    // 2. 🚨 CLOUDINARY DETECTOR: Fixes the broken "image/upload" links
+    // REPLACE 'YOUR_CLOUD_NAME' below with your actual Cloudinary name
+    if (strPath.includes("image/upload")) {
+        const cloudName = "dgt52rkq1"; 
+        const cleanCloudPath = strPath.startsWith("/") ? strPath.slice(1) : strPath;
+        return `https://res.cloudinary.com/${cloudName}/${cleanCloudPath}`;
+    }
+
+    // 3. Local Backend Images: Fixes the "comimage" error
+    const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
+    return `https://bua-backend.onrender.com${cleanPath}`;
   };
 
   const getRating = (p: any) => {
@@ -174,7 +190,7 @@ export default function Home() {
                                     <h3 className="font-bold text-lg text-gray-800 group-hover:text-[#8B0000] transition-colors line-clamp-2">{product.name}</h3>
                                 </Link>
                                 <div className="flex justify-between items-center mt-2 mb-4">
-                                     {/* 👇 UPDATED: Removed the "Source" line and replaced with clean Description */}
+                                     {/* 👇 UPDATED: Clean Description */}
                                      <p className="text-sm text-gray-600 mb-3 line-clamp-2" title={product.description}>
                                         {product.description || "No description provided."}
                                      </p>
