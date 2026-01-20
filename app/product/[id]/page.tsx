@@ -23,7 +23,7 @@ export default function ProductDetail() {
   const [chatLoading, setChatLoading] = useState(false);
 
   // 👇 FINAL FIX: Handles missing slashes automatically
-  // This fixes the "bua-backend.onrender.comimage" error
+  // This prevents the "bua-backend.onrender.comimage" crash
   const getImageUrl = (path: string) => {
     if (!path) return "/placeholder.png"; 
     const strPath = path.toString();
@@ -32,7 +32,7 @@ export default function ProductDetail() {
     if (strPath.startsWith("http")) return strPath; 
     
     // 2. If it's a local link, make sure it starts with a slash "/"
-    // This prevents the "comimage" error
+    // This logic fixes the "comimage" error by forcing a slash if one is missing
     const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
     
     return `https://bua-backend.onrender.com${cleanPath}`;
