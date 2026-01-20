@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
 import { useCart } from '../../context/CartContext';
-// 👇 Keeping your Reviews Section
 import ReviewsSection from '../../components/ReviewsSection';
 
 export default function ProductDetail() {
@@ -23,12 +22,20 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState('details');
   const [chatLoading, setChatLoading] = useState(false);
 
-  // 👇 THE FIX: Smart Image URL Handler
+  // 👇 FINAL FIX: Handles missing slashes automatically
+  // This fixes the "bua-backend.onrender.comimage" error
   const getImageUrl = (path: string) => {
     if (!path) return "/placeholder.png"; 
-    // Added .toString() to be 100% safe against crashes
-    if (path.toString().startsWith("http")) return path; 
-    return `https://bua-backend.onrender.com${path}`;
+    const strPath = path.toString();
+    
+    // 1. If it's a Cloudinary link (starts with http), return it as is.
+    if (strPath.startsWith("http")) return strPath; 
+    
+    // 2. If it's a local link, make sure it starts with a slash "/"
+    // This prevents the "comimage" error
+    const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
+    
+    return `https://bua-backend.onrender.com${cleanPath}`;
   };
 
   // --- FETCH DATA ---
@@ -157,7 +164,7 @@ export default function ProductDetail() {
 
                     <p className="text-4xl font-black text-[#8B0000] mb-8">₦{Number(product.price).toLocaleString()}</p>
                     
-                    {/* Seller Box */}
+                    {/* Seller Box - Red Theme */}
                     <div className="bg-red-50 p-6 rounded-xl mb-8 border border-red-100 shadow-sm">
                         <p className="font-bold text-[#8B0000] mb-1 text-xs uppercase tracking-wider">Distributor / Supplier</p>
                         <p className="text-gray-900 font-bold text-lg mb-4 flex items-center gap-2">
@@ -214,7 +221,7 @@ export default function ProductDetail() {
                         <p>{product.description || "No description provided."}</p>
                     </div>
                 ) : (
-                    // 👇 THIS IS THE REVIEWS SECTION
+                    // 👇 Reviews Section
                     <ReviewsSection reviews={product.reviews || []} productId={product.id} />
                 )}
             </div>
