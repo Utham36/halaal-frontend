@@ -33,7 +33,7 @@ export default function ProductDetail() {
     // 2. 🚨 CLOUDINARY FIX: Detects the partial path sent by your backend
     if (strPath.includes("image/upload")) {
         // ⚠️ REPLACE 'YOUR_CLOUD_NAME' WITH YOUR ACTUAL CLOUDINARY NAME (e.g. 'demo', 'dv123', etc)
-        const cloudName = "YOUR_CLOUD_NAME"; 
+        const cloudName = "dgt52rkq1"; 
         return `https://res.cloudinary.com/${cloudName}/${strPath.startsWith("/") ? strPath.slice(1) : strPath}`;
     }
     
