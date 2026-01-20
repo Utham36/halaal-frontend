@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
 import { useCart } from '../../context/CartContext';
-// 👇 IMPORT THE NEW REVIEWS COMPONENT
+// 👇 Keeping your Reviews Section
 import ReviewsSection from '../../components/ReviewsSection';
 
 export default function ProductDetail() {
@@ -22,13 +22,12 @@ export default function ProductDetail() {
   // 2. UI STATES
   const [activeTab, setActiveTab] = useState('details');
   const [chatLoading, setChatLoading] = useState(false);
-  
-  // (Removed manual review states: rating, reviewComment, submitting - now handled in ReviewsSection)
 
-  // 👇 HELPER: Fixes Image Links
+  // 👇 THE FIX: Smart Image URL Handler
   const getImageUrl = (path: string) => {
     if (!path) return "/placeholder.png"; 
-    if (path.startsWith("http")) return path; 
+    // Added .toString() to be 100% safe against crashes
+    if (path.toString().startsWith("http")) return path; 
     return `https://bua-backend.onrender.com${path}`;
   };
 
@@ -158,7 +157,7 @@ export default function ProductDetail() {
 
                     <p className="text-4xl font-black text-[#8B0000] mb-8">₦{Number(product.price).toLocaleString()}</p>
                     
-                    {/* Seller Box - Red Theme */}
+                    {/* Seller Box */}
                     <div className="bg-red-50 p-6 rounded-xl mb-8 border border-red-100 shadow-sm">
                         <p className="font-bold text-[#8B0000] mb-1 text-xs uppercase tracking-wider">Distributor / Supplier</p>
                         <p className="text-gray-900 font-bold text-lg mb-4 flex items-center gap-2">
@@ -215,7 +214,7 @@ export default function ProductDetail() {
                         <p>{product.description || "No description provided."}</p>
                     </div>
                 ) : (
-                    // 👇 THIS IS THE NEW PART: Using the modular Reviews Component
+                    // 👇 THIS IS THE REVIEWS SECTION
                     <ReviewsSection reviews={product.reviews || []} productId={product.id} />
                 )}
             </div>
