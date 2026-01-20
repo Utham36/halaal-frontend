@@ -22,18 +22,22 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState('details');
   const [chatLoading, setChatLoading] = useState(false);
 
-  // 👇 DEBUG VERSION of getImageUrl
+  // 👇 THE PERMANENT FIX
   const getImageUrl = (path: string) => {
-    // 1. Log the raw path to the console so we can troubleshoot
-    console.log("🔍 DEBUG IMAGE PATH:", path);
-
     if (!path) return "/placeholder.png"; 
     const strPath = path.toString();
-
-    // Standard Checks
+    
+    // 1. If it is already a full link (starts with http), use it.
     if (strPath.startsWith("http")) return strPath; 
     
-    // Default behavior (likely causing the issue)
+    // 2. 🚨 CLOUDINARY FIX: Detects the partial path sent by your backend
+    if (strPath.includes("image/upload")) {
+        // ⚠️ REPLACE 'YOUR_CLOUD_NAME' WITH YOUR ACTUAL CLOUDINARY NAME (e.g. 'demo', 'dv123', etc)
+        const cloudName = "YOUR_CLOUD_NAME"; 
+        return `https://res.cloudinary.com/${cloudName}/${strPath.startsWith("/") ? strPath.slice(1) : strPath}`;
+    }
+    
+    // 3. If it is a local backend image, ensure it has a slash
     const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
     return `https://bua-backend.onrender.com${cleanPath}`;
   };
