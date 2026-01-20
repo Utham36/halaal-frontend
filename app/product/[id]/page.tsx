@@ -22,19 +22,19 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState('details');
   const [chatLoading, setChatLoading] = useState(false);
 
-  // 👇 FINAL FIX: Handles missing slashes automatically
-  // This prevents the "bua-backend.onrender.comimage" crash
+  // 👇 DEBUG VERSION of getImageUrl
   const getImageUrl = (path: string) => {
+    // 1. Log the raw path to the console so we can troubleshoot
+    console.log("🔍 DEBUG IMAGE PATH:", path);
+
     if (!path) return "/placeholder.png"; 
     const strPath = path.toString();
-    
-    // 1. If it's a Cloudinary link (starts with http), return it as is.
+
+    // Standard Checks
     if (strPath.startsWith("http")) return strPath; 
     
-    // 2. If it's a local link, make sure it starts with a slash "/"
-    // This logic fixes the "comimage" error by forcing a slash if one is missing
+    // Default behavior (likely causing the issue)
     const cleanPath = strPath.startsWith("/") ? strPath : `/${strPath}`;
-    
     return `https://bua-backend.onrender.com${cleanPath}`;
   };
 
